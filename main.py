@@ -1,1 +1,2 @@
-print("yeay")
+import pyserial
+import numpy
