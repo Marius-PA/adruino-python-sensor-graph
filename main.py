@@ -107,29 +107,33 @@ screen.update()
 
 # --- SECTION 3: LIVE EXECUTION ---
 with Serial('COM5', 115200, timeout=1) as ser:
-    print("Waiting for Arduino...")
-    time.sleep(2) # Give Arduino time to reboot
-    print("Starting scan!")
+    time.sleep(2)
     current_angle = 0
     
     # Loop to capture data
-    for i in range(0, 54):
-        data = ser.readline().decode('utf-8').strip()
-        if not data: continue
+    for i in range(0, 55):
+        raw_data = ser.readline().decode('utf-8').strip()
+        if not raw_data: continue
+        pieces = raw_data.split()
+    
+        for piece in pieces:
+            try:
+                if piece.startswith('A'):
+                    current_angle = float(piece[1:])
+                    
+                elif piece.startswith('B'):
+                    dist1 = float(piece[1:]) / 10
+                    if 1 < dist1 < 350: 
+                        draw_live_connected(current_angle, dist1, "blue", scale)
+                        
+                elif piece.startswith('C'):
+                    dist2 = float(piece[1:]) / 10
+                    if 1 < dist2 < 350: 
+                        draw_live_connected((current_angle + 180) % 360, dist2, "red", scale)
+                        
+            except ValueError:
+                pass
             
-        if data.startswith('A'):
-            current_angle = float(data[1:])
-        elif data.startswith('B'):
-            dist1 = float(data[1:])
-            dist1 = dist1 / 10
-            # Swapped draw_live_dot for our new connected function!
-            draw_live_connected(current_angle, dist1, "blue", scale)
-        elif data.startswith('C'):
-            dist2 = float(data[1:])
-            dist2 = dist2 / 10
-            # Offset back-to-back sensor
-            draw_live_connected((current_angle + 180) % 360, dist2, "red", scale)
-            
-        screen.update() 
+        screen.update()
 
 turtle.done()
