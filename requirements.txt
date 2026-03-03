@@ -1,2 +1,17 @@
 numpy
 pyserial
+
+with Serial('COM5', 115200, timeout=1) as ser:
+    values_sensor1 = []
+    values_sensor2 = []
+    for i in range(0, 360):
+        data = ser.readline().decode('utf-8').strip()
+        
+        if data.count(",") == 2 and data != '':
+            angle_str, dist1_str, dist2_str = data.split(",")
+            angle = float(angle_str)
+            dist1 = float(dist1_str)  # Use dist1_str instead of dist2_str
+            dist2 = float(dist2_str)
+            values_sensor1.append([angle, dist1])
+            values_sensor2.append([angle, dist2])
+            print(values_sensor1[-1], values_sensor2[-1])

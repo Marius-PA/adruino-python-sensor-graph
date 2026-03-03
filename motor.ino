@@ -14,7 +14,7 @@ const float SOUND_SPEED = 340.0 / 1000;
  
 // Servo moteur //
 #include <Servo.h>  // on inclut la bibliothèque pour piloter un servomoteur
- 
+
 Servo servoMotor; //  Créez un objet servo
 int i=0;
 void setup() {
