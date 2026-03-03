@@ -3,8 +3,10 @@
  */
  
 /* Constantes pour les broches */
-const byte TRIGGER_PIN = 12; // Broche TRIGGER
-const byte ECHO_PIN = 11;    // Broche ECHO
+const byte TRIGGER1_PIN = 12; // Broche TRIGGER1
+const byte ECHO1_PIN = 11;    // Broche ECHO1
+const byte TRIGGER2_PIN = 13; // Broche TRIGGER2
+const byte ECHO2_PIN = 10;    // Broche ECHO2
  
 /* Constantes pour le timeout */
 const unsigned long MEASURE_TIMEOUT = 25000; // 25ms = ~8m à 340m/s
@@ -14,7 +16,7 @@ const float SOUND_SPEED = 340.0 / 1000;
  
 // Servo moteur //
 #include <Servo.h>  // on inclut la bibliothèque pour piloter un servomoteur
-
+ 
 Servo servoMotor; //  Créez un objet servo
 int i=0;
 void setup() {
@@ -24,9 +26,12 @@ void setup() {
   Serial.begin(115200);
    
   /* Initialise les broches */
-  pinMode(TRIGGER_PIN, OUTPUT);
-  digitalWrite(TRIGGER_PIN, LOW); // La broche TRIGGER doit être à LOW au repos
-  pinMode(ECHO_PIN, INPUT);
+  pinMode(TRIGGER1_PIN, OUTPUT);
+  digitalWrite(TRIGGER1_PIN, LOW); // La broche TRIGGER doit être à LOW au repos
+  pinMode(ECHO1_PIN, INPUT);
+  pinMode(TRIGGER2_PIN, OUTPUT);
+  digitalWrite(TRIGGER2_PIN, LOW); // La broche TRIGGER doit être à LOW au repos
+  pinMode(ECHO2_PIN, INPUT);
 }
  
  
@@ -35,21 +40,29 @@ void loop()
   for (i=0;i<=180;i=i+10)
   {
     servoMotor.write(i); // Envoyez le servo à la position de 0 degré
-      /* 1. Lance une mesure de distance en envoyant une impulsion HIGH de 10µs sur la broche TRIGGER */
-    digitalWrite(TRIGGER_PIN, HIGH);
+    Serial.println(i);
+    
+    /* Capteur ultrason 1:*/
+    digitalWrite(TRIGGER1_PIN, HIGH);
     delayMicroseconds(10);
-    digitalWrite(TRIGGER_PIN, LOW);
-   
-    /* 2. Mesure le temps entre l'envoi de l'impulsion ultrasonique et son écho (si il existe) */
-    long measure = pulseIn(ECHO_PIN, HIGH, MEASURE_TIMEOUT);
-   
-    /* 3. Calcul la distance à partir du temps mesuré */
-    float distance_mm = measure / 2.0 * SOUND_SPEED;
+    digitalWrite(TRIGGER1_PIN, LOW);
+    long measure1 = pulseIn(ECHO1_PIN, HIGH, MEASURE_TIMEOUT);
+    float distance1_mm = measure1 / 2.0 * SOUND_SPEED;
+    
+    delay(50);
+    
+    /* Capteur ultrason 2:*/
+    digitalWrite(TRIGGER2_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIGGER2_PIN, LOW);
+    long measure2 = pulseIn(ECHO2_PIN, HIGH, MEASURE_TIMEOUT);
+    float distance2_mm = measure2 / 2.0 * SOUND_SPEED;
    
     /* Affiche les résultats en mm, cm et m */
-    Serial.print(i);
-    Serial.print(",");
-    Serial.println(distance_mm);
+    Serial.print("A");
+    Serial.println(distance1_mm);
+    Serial.print("B");
+    Serial.println(distance2_mm);
  
     delay(1000);
   }
