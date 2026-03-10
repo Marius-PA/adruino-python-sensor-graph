@@ -111,7 +111,7 @@ with Serial('COM5', 115200, timeout=1) as ser:
     current_angle = 0
     
     # Loop to capture data
-    for i in range(0, 55):
+    for i in range(0, 163):
         raw_data = ser.readline().decode('utf-8').strip()
         if not raw_data: continue
         pieces = raw_data.split()
